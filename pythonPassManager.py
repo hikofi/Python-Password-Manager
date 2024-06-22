@@ -61,11 +61,10 @@ def pinUnlock():
                         userPin = input("Wrong pin buddy. Enter your pin: ")
 
 
-def main():
-    keyExists()
-    #
+# def main():
+#     keyExists()
+#     #
 
 
-
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
