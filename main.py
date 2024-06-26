@@ -34,6 +34,8 @@ class LockScreen(QWidget):
 
         # QPushButton for submission
         self.submitButton = QPushButton('Submit', self)
+        font = QFont("Helvetica", 10)  
+        self.submitButton.setFont(font)
 
         # Add widgets to the layout
         layout.addWidget(self.text)
@@ -42,6 +44,62 @@ class LockScreen(QWidget):
 
         # Set the layout on the QWidget
         self.setLayout(layout)
+
+class newUser(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setUpKeyUI()
+
+    def setUpKeyUI(self):
+        # Set size and layout
+        self.setFixedSize(480, 540)       
+        layout = QVBoxLayout()
+        layout.setContentsMargins(120, 150, 120, 150) #left, top, right, bot
+        # Enter your name
+        # Master password
+        # Generates a key
+        # add homescreen widgets
+        
+        # Name for user UI
+        self.nameText = QLabel("Enter your name: ", self)
+        self.nameText.setAlignment(Qt.AlignCenter)
+        font = QFont("Helvetica", 11)
+        self.nameText.setFont(font)
+        self.name = QLineEdit(self)
+        self.name.setFont(font)
+
+        # Master Password, maybe make it output it onto a text document.
+        # Make sure contains capital and numbers/symbols,
+        # Make button to generate a random password
+        self.passText = QLabel("Enter your password: ", self)
+        self.passText.setAlignment(Qt.AlignCenter)
+        font = QFont("Helvetica", 11)
+        self.passText.setFont(font)
+        self.pw = QLineEdit(self)
+        self.pw.setEchoMode(QLineEdit.Password)
+        self.pw.setToolTip("Password must:\n - Be longer than 6 characters\n - Contain at least one uppercase letter \n - Contain at least one number")
+
+        #Repeat Master password
+        self.passText2 = QLabel("Re-enter your password: ", self)
+        self.passText2.setAlignment(Qt.AlignCenter)
+        font = QFont("Helvetica", 11)
+        self.passText2.setFont(font)
+        self.pw2 = QLineEdit(self)
+        self.pw2.setEchoMode(QLineEdit.Password)
+        self.pw2.setToolTip("Password must:\n - Be longer than 6 characters\n - Contain at least one uppercase letter \n - Contain at least one number")
+        
+        # Add wid to layout
+        layout.addWidget(self.nameText)
+        layout.addWidget(self.name)
+        layout.addWidget(self.passText)
+        layout.addWidget(self.pw)
+        layout.addWidget(self.passText2)
+        layout.addWidget(self.pw2)
+
+
+         # Set the layout on the QWidget
+        self.setLayout(layout)
+
 
 
 class HomeScreen(QWidget):
@@ -89,8 +147,8 @@ class passManager(QMainWindow):
             self.label = QLabel("Let's locate the key.", self)
             # self.label.move(50, 50)
             # self.label.show()
-        else:
-            self.label = QLabel("Let's generate a key.", self)
+        elif self.status == 3:
+            self.setCentralWidget(newUser())
             # self.label.move(50, 50)
             # self.label.show()
 
