@@ -33,7 +33,7 @@ class LockScreen(QWidget):
 
 
         # QPushButton for submission
-        self.submitButton = QPushButton('Submit', self)
+        self.submitButton = QPushButton("Submit", self)
         font = QFont("Helvetica", 10)  
         self.submitButton.setFont(font)
 
@@ -59,13 +59,16 @@ class newUser(QWidget):
         # Master password
         # Generates a key
         # add homescreen widgets
-        
+
+
         # Name for user UI
         self.nameText = QLabel("Enter your name: ", self)
         self.nameText.setAlignment(Qt.AlignCenter)
         font = QFont("Helvetica", 11)
         self.nameText.setFont(font)
-        self.name = QLineEdit(self)
+        self.name = QLineEdit("User", self)
+        self.name.setMaxLength(13)
+        self.name.setToolTip("Maximum length of 13 characters")
         self.name.setFont(font)
 
         # Master Password, maybe make it output it onto a text document.
@@ -73,21 +76,37 @@ class newUser(QWidget):
         # Make button to generate a random password
         self.passText = QLabel("Enter your password: ", self)
         self.passText.setAlignment(Qt.AlignCenter)
-        font = QFont("Helvetica", 11)
+        # font = QFont("Helvetica", 11)
         self.passText.setFont(font)
         self.pw = QLineEdit(self)
         self.pw.setEchoMode(QLineEdit.Password)
         self.pw.setToolTip("Password must:\n - Be longer than 6 characters\n - Contain at least one uppercase letter \n - Contain at least one number")
 
-        #Repeat Master password
+        # Repeat Master password
         self.passText2 = QLabel("Re-enter your password: ", self)
         self.passText2.setAlignment(Qt.AlignCenter)
-        font = QFont("Helvetica", 11)
+        # font = QFont("Helvetica", 11)
         self.passText2.setFont(font)
         self.pw2 = QLineEdit(self)
         self.pw2.setEchoMode(QLineEdit.Password)
         self.pw2.setToolTip("Password must:\n - Be longer than 6 characters\n - Contain at least one uppercase letter \n - Contain at least one number")
         
+        # Updated username function
+        self.usernameUpdate = QLabel(self)
+        formatted_text = f"Welcome, <span style='color: rgb(10, 186, 181);'>User</span>"
+        self.usernameUpdate.setText(formatted_text)
+        self.usernameUpdate.setAlignment(Qt.AlignCenter)
+        fontUpdate = QFont("Helvetica", 15)
+        self.usernameUpdate.setFont(fontUpdate)
+
+        # Submit button
+        self.submitButton = QPushButton("Submit", self)
+        font = QFont("Helvetica", 10)  
+        self.submitButton.setFont(font)
+        # Disable button until username is inputted and password match
+        self.submitButton.setEnabled(False)
+
+        layout.addWidget(self.usernameUpdate)
         # Add wid to layout
         layout.addWidget(self.nameText)
         layout.addWidget(self.name)
@@ -95,10 +114,49 @@ class newUser(QWidget):
         layout.addWidget(self.pw)
         layout.addWidget(self.passText2)
         layout.addWidget(self.pw2)
+        layout.addWidget(self.submitButton)
 
+        self.name.textChanged.connect(self.updateUsername)
 
-         # Set the layout on the QWidget
+        # Send to see if passwords match (&username is not null)
+        self.pw.textChanged.connect(self.checkUserAndPass)
+        # Send to see if passwords match (&username is not null)
+        self.pw2.textChanged.connect(self.checkUserAndPass)
+
+        # Set the layout on the QWidget
         self.setLayout(layout)
+
+    def updateUsername(self, text):
+        # self.usernameUpdate.setText(f"Welcome, {text}")
+        # self.usernameUpdate.setStyleSheet("color: rgb(10, 186, 181);")
+        formatted_text = f"Welcome, <span style='color: rgb(10, 186, 181);'>{text}</span>"
+        self.usernameUpdate.setText(formatted_text)
+
+    def checkUserAndPass(self):
+        upperCase = False
+        for character in self.pw.text():
+            if character.isupper():
+                upperCase = True
+                break
+
+        containsNumber = False
+        for character2 in self.pw.text():
+            if character2.isdigit():
+                containsNumber = True
+                break
+
+        if self.pw.text() == self.pw2.text() and len(self.pw.text()) >= 6 and upperCase == True and containsNumber == True:
+            self.submitButton.setEnabled(True)
+        else:
+            self.submitButton.setEnabled(False)
+
+
+    
+    # Exist username is not empty
+    # passwords match
+        # insert username and password, maybe create document
+
+    #Generate key
 
 
 
