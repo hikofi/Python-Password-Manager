@@ -117,6 +117,7 @@ class newUser(QWidget):
         layout.addWidget(self.submitButton)
 
         self.name.textChanged.connect(self.updateUsername)
+        self.name.textChanged.connect(self.checkUserAndPass)
 
         # Send to see if passwords match (&username is not null)
         self.pw.textChanged.connect(self.checkUserAndPass)
@@ -145,7 +146,7 @@ class newUser(QWidget):
                 containsNumber = True
                 break
 
-        if self.pw.text() == self.pw2.text() and len(self.pw.text()) >= 6 and upperCase == True and containsNumber == True:
+        if self.pw.text() == self.pw2.text() and len(self.pw.text()) >= 6 and upperCase == True and containsNumber == True and len(self.name.text()) > 0:
             self.submitButton.setEnabled(True)
         else:
             self.submitButton.setEnabled(False)
