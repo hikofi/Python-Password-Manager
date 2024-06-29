@@ -13,7 +13,7 @@ class LockScreen(QWidget):
     def setupUI(self):
         # self.setGeometry(100, 100, 200, 100)  # Set the size of the LockScreen
         # Create a vertical layout
-        self.setFixedSize(480, 540)
+        self.setFixedSize(480, 600)
         
         layout = QVBoxLayout()
         layout.setContentsMargins(120, 230, 120, 230) #left, top, right, bot
@@ -52,9 +52,9 @@ class newUser(QWidget):
 
     def setUpKeyUI(self):
         # Set size and layout
-        self.setFixedSize(480, 540)       
+        self.setFixedSize(480, 600)       
         layout = QVBoxLayout()
-        layout.setContentsMargins(120, 50, 120, 50) #left, top, right, bot
+        layout.setContentsMargins(120, 0, 120, 0) #left, top, right, bot
 
         
         # Enter your name
@@ -242,8 +242,18 @@ class newUser(QWidget):
         if self.pw.text() == self.pw2.text() and len(self.pw.text()) >= 6 and upperCase == True and containsNumber == True and len(self.name.text()) > 0:
             # self.submitButton.setEnabled(True)
             print("Move to next step")
-        elif self.name.text() == '' or containsSpace == True and self.pw.text() != self.pw2.text() and len(self.pw.text()) >= 6 and upperCase == True and containsNumber == True:
+
+        if (self.name.text() == '' or containsSpace == True) and (self.pw.text() != '' or self.pw2.text() != ''):
+            self.passwordRules.setText("Username is empty or contains spaces\n\nPasswords must:")
+        elif self.name.text() == '' or containsSpace == True:
             self.passwordRules.setText("Username is empty or contains spaces")
+        elif self.pw.text() != '' or self.pw2.text() != '':
+            self.passwordRules.setText("Passwords must:")
+
+          
+        # else:
+        #     self.passwordRules.setText("")
+   
         
         # Need to fix this as once the setText username is empty is added.. i cant reset the test
         # elif self.name.text() != '' or containsSpace == False or self.pw.text() != self.pw2.text() or len(self.pw.text()) <= 6 and upperCase == False and containsNumber == False:
