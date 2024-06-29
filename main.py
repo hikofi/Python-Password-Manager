@@ -18,7 +18,7 @@ class LockScreen(QWidget):
         layout = QVBoxLayout()
         layout.setContentsMargins(120, 230, 120, 230) #left, top, right, bot
 
-         # Set spacing between widgets (0 for no space)
+        # Set spacing between widgets (0 for no space)
         # layout.setSpacing(0)
         # QLineEdit for the password
 
@@ -54,7 +54,9 @@ class newUser(QWidget):
         # Set size and layout
         self.setFixedSize(480, 540)       
         layout = QVBoxLayout()
-        layout.setContentsMargins(120, 150, 120, 150) #left, top, right, bot
+        layout.setContentsMargins(120, 50, 120, 50) #left, top, right, bot
+
+        
         # Enter your name
         # Master password
         # Generates a key
@@ -103,8 +105,39 @@ class newUser(QWidget):
         self.submitButton = QPushButton("Submit", self)
         font = QFont("Helvetica", 10)  
         self.submitButton.setFont(font)
+        # self.submitButton.setToolTip("Username must not be empty\nPassword must:\n - Be longer than 6 characters\n - Contain at least one uppercase letter \n - Contain at least one number")
         # Disable button until username is inputted and password match
-        self.submitButton.setEnabled(False)
+        # self.submitButton.setEnabled(False)
+
+        # Password Warning 
+        self.passwordRules = QLabel(self)
+        self.passwordRules.setFont(font)
+        # self.passwordRules.setText("Passwords must:")
+        # self.passwordRules.setStyleSheet("color: rgba(255, 255, 255, 160);")
+
+        # Password Warning Non matching
+        self.passwordRulesNonMatch = QLabel(self)
+        self.passwordRulesNonMatch.setFont(font)
+        # self.passwordRulesNonMatch.setText(" - Match")
+        # self.passwordRulesNonMatch.setStyleSheet("color: rgba(255, 255, 255, 160);")
+
+        # Password Warning less than 6 char
+        self.passwordRulesLength = QLabel(self)
+        self.passwordRulesLength.setFont(font)
+        # self.passwordRulesLength.setText(" - Be at least 6 characters in length")
+        # self.passwordRulesLength.setStyleSheet("color: rgba(255, 255, 255, 160);")
+
+        # Password Warning no upper
+        self.passwordRulesUpper = QLabel(self)
+        self.passwordRulesUpper.setFont(font)
+        # self.passwordRulesUpper.setText(" - Contain an uppercase letter")
+        # self.passwordRulesUpper.setStyleSheet("color: rgba(255, 255, 255, 160);")
+
+        # Password Warning message
+        self.passwordRulesNum = QLabel(self)
+        self.passwordRulesNum.setFont(font)
+        # self.passwordRulesNum.setText(" - Contain a number")
+        # self.passwordRulesNum.setStyleSheet("color: rgba(255, 255, 255, 160);")
 
         layout.addWidget(self.usernameUpdate)
         # Add wid to layout
@@ -115,14 +148,25 @@ class newUser(QWidget):
         layout.addWidget(self.passText2)
         layout.addWidget(self.pw2)
         layout.addWidget(self.submitButton)
+        # Password Rules
+        layout.addWidget(self.passwordRules)
+        layout.addWidget(self.passwordRulesNonMatch)
+        layout.addWidget(self.passwordRulesLength)
+        layout.addWidget(self.passwordRulesUpper)
+        layout.addWidget(self.passwordRulesNum)
 
         self.name.textChanged.connect(self.updateUsername)
         self.name.textChanged.connect(self.checkUserAndPass)
 
-        # Send to see if passwords match (&username is not null)
+        # # Send to see if passwords match (&username is not null)
+        self.pw.textChanged.connect(self.passwordCriteriaTextInit)
         self.pw.textChanged.connect(self.checkUserAndPass)
-        # Send to see if passwords match (&username is not null)
+        # # Send to see if passwords match (&username is not null)
+        self.pw2.textChanged.connect(self.passwordCriteriaTextInit)
         self.pw2.textChanged.connect(self.checkUserAndPass)
+        # Button press check
+        self.submitButton.clicked.connect(self.checkUserAndPass)
+
 
         # Set the layout on the QWidget
         self.setLayout(layout)
@@ -133,6 +177,37 @@ class newUser(QWidget):
         formatted_text = f"Welcome, <span style='color: rgb(10, 186, 181);'>{text}</span>"
         self.usernameUpdate.setText(formatted_text)
 
+    # Determine what is missing, then add QLabel underneath submit button
+    # This can be rewritting user any() for c in self.pw.text()
+
+    def passwordCriteriaTextInit(self):
+        # Password Warning 
+        if self.pw.text() or self.pw2.text() != '':
+            self.passwordRules.setText("Passwords must:")
+            self.passwordRules.setStyleSheet("color: rgba(255, 255, 255, 160);")
+
+            # Password Warning Non matching
+            self.passwordRulesNonMatch.setText(" - Match")
+            self.passwordRulesNonMatch.setStyleSheet("color: rgba(255, 255, 255, 160);")
+
+            # Password Warning less than 6 char
+            self.passwordRulesLength.setText(" - Be at least 6 characters in length")
+            self.passwordRulesLength.setStyleSheet("color: rgba(255, 255, 255, 160);")
+
+            # Password Warning no upper
+            self.passwordRulesUpper.setText(" - Contain an uppercase letter")
+            self.passwordRulesUpper.setStyleSheet("color: rgba(255, 255, 255, 160);")
+
+            # Password Warning message
+            self.passwordRulesNum.setText(" - Contain a number")
+            self.passwordRulesNum.setStyleSheet("color: rgba(255, 255, 255, 160);")
+        else:
+            self.passwordRules.setText("")
+            self.passwordRulesNonMatch.setText("")
+            self.passwordRulesLength.setText("")
+            self.passwordRulesUpper.setText("")
+            self.passwordRulesNum.setText("")
+
     def checkUserAndPass(self):
         upperCase = False
         for character in self.pw.text():
@@ -141,25 +216,106 @@ class newUser(QWidget):
                 break
 
         containsNumber = False
-        for character2 in self.pw.text():
-            if character2.isdigit():
+        for character in self.pw.text():
+            if character.isdigit():
                 containsNumber = True
                 break
 
+        upperCaseLower = False
+        for character in self.pw2.text():
+            if character.isupper():
+                upperCaseLower = True
+                break
+
+        containsNumberLower = False
+        for character in self.pw2.text():
+            if character.isdigit():
+                containsNumberLower = True
+                break
+        
+        containsSpace = False
+        for character3 in self.name.text():
+            if character3.isspace():
+                containsSpace = True
+                break
+
         if self.pw.text() == self.pw2.text() and len(self.pw.text()) >= 6 and upperCase == True and containsNumber == True and len(self.name.text()) > 0:
-            self.submitButton.setEnabled(True)
+            # self.submitButton.setEnabled(True)
+            print("Move to next step")
+        elif self.name.text() == '' or containsSpace == True and self.pw.text() != self.pw2.text() and len(self.pw.text()) >= 6 and upperCase == True and containsNumber == True:
+            self.passwordRules.setText("Username is empty or contains spaces")
+        
+        # Need to fix this as once the setText username is empty is added.. i cant reset the test
+        # elif self.name.text() != '' or containsSpace == False or self.pw.text() != self.pw2.text() or len(self.pw.text()) <= 6 and upperCase == False and containsNumber == False:
+        #     self.passwordRules.setText("Passwords must:")
+        # elif self.name.text() == '' or containsSpace == True or self.pw.text() != self.pw2.text() or len(self.pw.text()) <= 6 and upperCase == False and containsNumber == False:
+        #     self.passwordRules.setText("Username is empty or contains spaces\nPasswords must:")
+
+
+        # Strikethrough Font, ticking off criterias met:
+        # strikeOutfont = QFont("Helvetica", 10)  
+        # self.passwordRulesNonMatch.setFont(QFont.setStrikeOut(True))
+        font = QFont("Helvetica", 10)  
+        fontMeetCriteria = QFont("Helvetica", 10)
+        
+        fontMeetCriteria.setStrikeOut(True)
+
+        if self.pw.text() == self.pw2.text() and self.pw.text() != '':
+            self.passwordRulesNonMatch.setStyleSheet("color: rgba(255, 255, 255, 25);")
+            self.passwordRulesNonMatch.setFont(fontMeetCriteria)
         else:
-            self.submitButton.setEnabled(False)
+            self.passwordRulesNonMatch.setStyleSheet("color: rgba(255, 255, 255, 160);")
+            self.passwordRulesNonMatch.setFont(font)
+        # Update
 
+        if len(self.pw.text()) >= 6 or len(self.pw2.text()) >= 6:
+            self.passwordRulesLength.setStyleSheet("color: rgba(255, 255, 255, 25);")
+            self.passwordRulesLength.setFont(fontMeetCriteria)
+        else:
+            self.passwordRulesLength.setStyleSheet("color: rgba(255, 255, 255, 160);")
+            self.passwordRulesLength.setFont(font)
+        
+        # Uppercase will show if only the top password contains upercase, needs to do this for lower as well
+        if upperCase == True or upperCaseLower == True:
+            self.passwordRulesUpper.setStyleSheet("color: rgba(255, 255, 255, 25);")
+            self.passwordRulesUpper.setFont(fontMeetCriteria)
+        else:
+            self.passwordRulesUpper.setStyleSheet("color: rgba(255, 255, 255, 160);")
+            self.passwordRulesUpper.setFont(font)
+        
+        if containsNumber == True or containsNumberLower == True:
+            self.passwordRulesNum.setStyleSheet("color: rgba(255, 255, 255, 25);")
+            self.passwordRulesNum.setFont(fontMeetCriteria)
+        else:
+            self.passwordRulesNum.setStyleSheet("color: rgba(255, 255, 255, 160);")
+            self.passwordRulesNum.setFont(font)
 
-    
-    # Exist username is not empty
-    # passwords match
-        # insert username and password, maybe create document
+           # Uppercase for lower
+        # if upperCaseLower == True:
+        #     self.passwordRulesUpper.setStyleSheet("color: rgba(255, 255, 255, 25);")
+        #     self.passwordRulesUpper.setFont(fontMeetCriteria)
+        # else:
+        #     self.passwordRulesUpper.setStyleSheet("color: rgba(255, 255, 255, 160);")
+        #     self.passwordRulesUpper.setFont(font)
+        
+        # if containsNumberLower == True:
+        #     self.passwordRulesNum.setStyleSheet("color: rgba(255, 255, 255, 25);")
+        #     self.passwordRulesNum.setFont(fontMeetCriteria)
+        # else:
+        #     self.passwordRulesNum.setStyleSheet("color: rgba(255, 255, 255, 160);")
+        #     self.passwordRulesNum.setFont(font)
+        # else:
+        #     self.passwordRules.setText("Password must be 6 characters minimum")
+        #     self.passwordRules2.setText("Password must contain 1 uppercase minimum")
+        #     self.passwordRules3.setText("Password must contain 1 number minimum")
+        #     print("There is an issue")
+
 
     #Generate key
-
-
+    # On button click
+        # if checkbox is ticked, ask user to choose a path to generate a text file
+    # Generate master key and fill in credentials
+    # Move onto next layout
 
 class HomeScreen(QWidget):
     def __init__(self):
